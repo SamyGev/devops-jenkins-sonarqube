@@ -4,7 +4,7 @@ services:
     container_name: jenkins
     image: jenkins/jenkins:2.453-jdk11
     networks:
-      - cloudacademylabs
+      - sonarqube
     ports:
       - "8080:8080"
     environment:
@@ -13,10 +13,9 @@ services:
       - socat
   socat:
     container_name: socat
-    image: socat-ca:latest
-    #image: alpine/socat:latest
+    image: alpine/socat:latest
     networks:
-      - cloudacademylabs
+      - sonarqube
     command: tcp-listen:2375,fork,reuseaddr unix-connect:/var/run/docker.sock
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -24,10 +23,9 @@ services:
       - "2375"
   postgres:
     container_name: postgres
-    image: postgres-ca:latest
-    #image: postgres:9.6
+    image: postgres:9.6
     networks:
-      - cloudacademylabs
+      - sonarqube
     environment:
       POSTGRES_USER: sonar
       POSTGRES_PASSWORD: sonarpasswd
@@ -38,13 +36,12 @@ services:
         hard: 40000
   sonarqube:
     container_name: sonarqube
-    image: sonarqube-ca:latest
-    #image: sonarqube:7.1
+    image: sonarqube:7.1
     ports:
       - "9000:9000"
       - "9092:9092"
     networks:
-      - cloudacademylabs
+      - sonarqube
     environment:
       SONARQUBE_JDBC_USERNAME: sonar
       SONARQUBE_JDBC_PASSWORD: sonarpasswd
@@ -53,5 +50,5 @@ services:
       - postgres
 
 networks:
-  cloudacademylabs:
-    name: cloudacademylabs
+  sonarqube:
+    name: sonarqube
